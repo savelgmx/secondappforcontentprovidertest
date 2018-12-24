@@ -12,13 +12,31 @@ import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+/*
+
+    В проекте SecondAppForContentProviderTest определить вертикальный LinearLayout.---
+
+    Добавить на разметку 2 спиннера  ----
+   -  в одном “Albums”, “Songs”, "AlbumSongs"
+            -  во втором - “query”, “insert”, “update”, “delete”; Строки захардкожены.
+
+    Добавить EditText, в который в последствии будет вписываться id элемента.
+    Если EditText пустой, то валидным считается только “query” и “insert”, на методы delete() и update() показывать тост с ошибкой.
+    Добавить Button (далее - кнопка действия), при нажатии на который будет выполняться выбранное во втором спиннере
+    действие с выбранной в первом спиннере таблицей и вписанным id в первый EditText.
+    Действие реализовать с помощью соответствующих методов getContentResolver() (query() / insert() / update() / delete(), пример есть в проекте)
+    Если в EditText (id) вписано не число или число, но записи под таким id в таблице нет, то при нажатии выводить тост - “Ошибка id”
+    Добавить три EditText’а (далее - EditText c данными), из которых будут заполнятся данные ContentValues для методов insert() и update()
+    Проверка валидности происходит с помощью метода query(), который должен показывать тост с текущими данными в выбранной таблице.
+*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.tv_hello).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.QueryBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ContentValues contentValues = new ContentValues();
