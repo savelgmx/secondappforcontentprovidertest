@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 contentValues.put("name", "new Name");
                 contentValues.put("release", "tomorrow");
                 getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"), contentValues, null, null);
+
             }
         });
 
