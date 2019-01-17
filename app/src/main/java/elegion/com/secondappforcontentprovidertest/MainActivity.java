@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -35,10 +36,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
+        Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
+
+
+
+
+
+
+
 
         findViewById(R.id.QueryBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("id", 0);
                 contentValues.put("name", "new Name");
