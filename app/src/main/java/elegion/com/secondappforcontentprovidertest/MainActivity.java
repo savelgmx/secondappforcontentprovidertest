@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 contentValues.put("id", 0);
                 contentValues.put("name", "new Name");
                 contentValues.put("release", "tomorrow");
-                getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"), contentValues, null, null);
+                getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album1"), contentValues, null, null);
 
             }
         });
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,
-                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album"),
+                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album1"),
                 null,
                 null,
                 null,
