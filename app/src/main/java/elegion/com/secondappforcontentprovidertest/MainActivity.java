@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 /*
 
-    В проекте SecondAppForContentProviderTest определить вертикальный LinearLayout.---
+    В проекте SecondAppForContentProviderTestSecondAppForContentProviderTest определить вертикальный LinearLayout.---
 
     Добавить на разметку 2 спиннера  ----
    -  в одном “Albums”, “Songs”, "AlbumSongs"
@@ -39,36 +39,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
         Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
 
-
-
-
-
-
-
-
         findViewById(R.id.QueryBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("id", 0);
                 contentValues.put("name", "new Name");
                 contentValues.put("release", "tomorrow");
-                getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album1"), contentValues, null, null);
+                getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"), contentValues, null, null);
 
             }
         });
 
-        getSupportLoaderManager().initLoader(12, null, this);
+        getSupportLoaderManager().initLoader(1, null, this);
 
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,
-                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album1"),
+                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"),
                 null,
                 null,
                 null,
