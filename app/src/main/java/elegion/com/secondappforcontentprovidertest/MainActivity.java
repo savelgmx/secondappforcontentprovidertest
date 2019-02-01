@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,13 +32,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Проверка валидности происходит с помощью метода query(), который должен показывать тост с текущими данными в выбранной таблице.
 */
 
+    Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
+    Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
-        Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
+
+        // Настраиваем адаптеры
+        ArrayAdapter<?> tables_adapter =
+                ArrayAdapter.createFromResource(this, R.array.tableslist, android.R.layout.simple_spinner_item);
+        tables_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<?> querytype_adapter =
+                ArrayAdapter.createFromResource(this, R.array.querytypelist, android.R.layout.simple_spinner_item);
+        querytype_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Настраиваем адаптер
 
         findViewById(R.id.QueryBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,10 +66,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+
+    //------здесь процедуры для визуального составления запроса
+    /*
+    String selected = spinner.getSelectedItem().toString();
+Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();*/
+
+    String selected= tables_sp.getSelectedItem().toString();
+
+
+
+    //------конец процедуры для визуального составления допроса
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,
-                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"),
+                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album"),
                 null,
                 null,
                 null,
