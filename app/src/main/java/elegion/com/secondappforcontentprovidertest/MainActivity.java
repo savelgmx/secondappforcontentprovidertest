@@ -3,13 +3,12 @@ package elegion.com.secondappforcontentprovidertest;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,26 +31,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Проверка валидности происходит с помощью метода query(), который должен показывать тост с текущими данными в выбранной таблице.
 */
 
-    Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
-    Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Spinner tables_sp =findViewById(R.id.tables_sp); //--определяем -Spinner tables_sp
+        final Spinner query_sp = findViewById(R.id.query_sp); //------еще Спиннер с вариантами запроса
 
-        // Настраиваем адаптеры
-        ArrayAdapter<?> tables_adapter =
-                ArrayAdapter.createFromResource(this, R.array.tableslist, android.R.layout.simple_spinner_item);
-        tables_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<?> querytype_adapter =
-                ArrayAdapter.createFromResource(this, R.array.querytypelist, android.R.layout.simple_spinner_item);
-        querytype_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Настраиваем адаптер
+//TODO Перенести OnClick из метода OnCreate
+        //TODO реализовать в пернесенном методе логику работы согласно ТЗ
+
+
 
         findViewById(R.id.QueryBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                String tables_sp_selected= tables_sp.getSelectedItem().toString();
+                Toast.makeText(getApplicationContext(), tables_sp_selected, Toast.LENGTH_SHORT).show();
+                String query_sp_selected= query_sp.getSelectedItem().toString();
+                Toast.makeText(getApplicationContext(), query_sp_selected, Toast.LENGTH_SHORT).show();
 
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("id", 0);
@@ -67,20 +68,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    //------здесь процедуры для визуального составления запроса
-    /*
-    String selected = spinner.getSelectedItem().toString();
-Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();*/
-
-    String selected= tables_sp.getSelectedItem().toString();
 
 
-
-    //------конец процедуры для визуального составления допроса
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,
-                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album"),
+                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/"),
                 null,
                 null,
                 null,
@@ -105,3 +98,45 @@ Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();*/
 
     }
 }
+/*
+package com.example.megap.a1_task;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class FirstActivity extends Activity implements View.OnClickListener {
+
+    public static final String TEXT_KEY = "TEXT_KEY";
+
+    private TextView mTextView;
+    private Button mButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_first);
+
+        mButton = (Button)findViewById(R.id.button);
+        mButton.setOnClickListener(this);
+
+        mTextView = (TextView)findViewById(R.id.textView);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (!TextUtils.isEmpty(mTextView.getText())) {
+            Toast.makeText(this, mTextView.getText().toString(), Toast.LENGTH_LONG).show();
+            Intent startSecondIntent = new Intent(FirstActivity.this, SecondActivity.class);
+            startSecondIntent.putExtra(TEXT_KEY, mTextView.getText().toString());
+            startActivity(startSecondIntent);
+        }
+    }
+
+ */
