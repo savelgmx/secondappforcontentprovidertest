@@ -28,21 +28,6 @@
         android:hint="Здесь вводят Id Только числа "
         android:inputType="number" />
 
-    <EditText
-        android:id="@+id/et_value1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text" />
-    <EditText
-        android:id="@+id/et_value2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text" />
-    <EditText
-        android:id="@+id/et_value3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text" />
 
     <Button
         android:id="@+id/QueryBtn"
