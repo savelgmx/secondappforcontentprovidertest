@@ -25,9 +25,27 @@
         android:id="@+id/et_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Здесь вводят Id Только числа "
+        android:hint="Здесь вводят Id.Только числа "
         android:inputType="number" />
 
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Название песни или альбома.Только текст"
+        android:inputType="text" />
+    <EditText
+        android:id="@+id/et_release"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Дата выхода альбома.Только текст"
+        android:inputType="text" />
+    <EditText
+        android:id="@+id/et_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Длительность песни.Только текст"
+        android:inputType="text" />
 
     <Button
         android:id="@+id/QueryBtn"

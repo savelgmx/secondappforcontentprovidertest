@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String LOG_TAG ="SecondApp" ;
 
      final Uri ALBUM_URI = Uri.parse("content://ru.startandroid.providers.AdressBook/contacts");
+    private ContentValues cv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +57,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         query_sp = findViewById(R.id.query_sp);
         mEditTextId =findViewById(R.id.et_id);
 
+
         //TODO реализовать в пернесенном методе логику работы согласно ТЗ
 
         mQueryBtn = (Button)findViewById(R.id.QueryBtn);
         mQueryBtn.setOnClickListener(this);
 
         getSupportLoaderManager().initLoader(1, null, this);
-
-
     }
 
     private boolean ismEditTextIdEmpty(){
@@ -86,6 +86,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return uri;
     }
 
+    private ContentValues SelectContentValues(){
+        //передаем content values т.е. состав и значения полей
+        // для заполнения в зависимости от
+        // того какая таблица выбрана в tables' spinner value
+
+         cv = new ContentValues();
+        if(this.tables_sp_selected.toLowerCase().equals("albums")){
+            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
+            cv.put("name", "new Name");
+            cv.put("release", "tomorrow");
+        }
+        if(this.tables_sp_selected.toLowerCase().equals("songs")){
+            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
+            cv.put("name", "new Name");
+            cv.put("duration", "tomorrow");
+        }
+        if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
+            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
+            cv.put("song_id", "new Name");
+            cv.put("albums_id", "tomorrow");
+
+
+        }
+        Log.d(LOG_TAG,"Content Values= "+cv);
+
+     return cv;
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -101,28 +129,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //выбираем действие в зависимости от типа запроса
         if(query_sp_selected.toLowerCase().equals("query")) {
             Toast.makeText(getApplicationContext(), "selected query", Toast.LENGTH_SHORT).show();
-            try{
-
-            }catch (Exception ex){
-
-            }
-
-            getContentResolver().query(uri,
-                    null,
-                    null,
-                    null,
-                    null);
-
-            Uri uri = Uri.parse("content://ru.startandroid.providers.AdressBook/phones");
             try {
-                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                getContentResolver().query(uri,
+                        null,
+                        null,
+                        null,
+                        null);
+
             } catch (Exception ex) {
                 Log.d(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
             }
+
         }
-        if(query_sp_selected.toLowerCase().equals("insert")) {
-            Toast.makeText(getApplicationContext(), "selected insert", Toast.LENGTH_SHORT).show();
-        }
+
+            if (query_sp_selected.toLowerCase().equals("insert")) {
+                Toast.makeText(getApplicationContext(), "selected insert", Toast.LENGTH_SHORT).show();
+                try {
+                    getContentResolver().insert(uri,cv);
+                 } catch (Exception ex) {
+                    Log.d(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
+                }
+
+            }
 
 
         if(query_sp_selected.toLowerCase().equals("update") && !ismEditTextIdEmpty() ){
