@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Spinner tables_sp;//--определяем -Spinner tables_sp
     private Spinner query_sp;//------еще Спиннер с вариантами запроса
     private Button mQueryBtn;
+
     private EditText mEditTextId;
+    private EditText mEditTextName;
+    private EditText mEditTextRelease;
+    private EditText mEditTextDuration;
 
     private String tables_sp_selected;
     private Uri uri;
@@ -53,11 +57,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         tables_sp =findViewById(R.id.tables_sp);
         query_sp = findViewById(R.id.query_sp);
+
         mEditTextId =findViewById(R.id.et_id);
-
-
+        mEditTextName =findViewById(R.id.et_name);
+        mEditTextRelease =findViewById(R.id.et_release);
+        mEditTextDuration =findViewById(R.id.et_duration);
         //TODO реализовать в пернесенном методе логику работы согласно ТЗ
 
         mQueryBtn = (Button)findViewById(R.id.QueryBtn);
@@ -94,13 +101,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          cv = new ContentValues();
         if(this.tables_sp_selected.toLowerCase().equals("albums")){
             cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("name", "new Name");
-            cv.put("release", "tomorrow");
+            cv.put("name",mEditTextName.getText().toString());
+            cv.put("release", mEditTextRelease.getText().toString());
         }
         if(this.tables_sp_selected.toLowerCase().equals("songs")){
             cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("name", "new Name");
-            cv.put("duration", "tomorrow");
+            cv.put("name", mEditTextName.getText().toString());
+            cv.put("duration", mEditTextDuration.getText().toString());
         }
         if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
             cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
@@ -123,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Toast.makeText(getApplicationContext(), query_sp_selected, Toast.LENGTH_SHORT).show();
 
 
-        uri =SelectTableUri();
+        uri =SelectTableUri(); //оперделяем какая таблица выбрана в Spinnere
+        cv = SelectContentValues();//что будет передваться в запрос
 
 
         //выбираем действие в зависимости от типа запроса
@@ -160,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             contentValues.put("name", "new Name");
             contentValues.put("release", "tomorrow");
             getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"), contentValues, null, null);
+            getContentResolver().update(uri, cv, null, null);
+
         }
         else if(query_sp_selected.toLowerCase().equals("update") && ismEditTextIdEmpty() ){
             Toast.makeText(getApplicationContext(),"Ошибка Операции Update. Id не должен быть пустым" ,Toast.LENGTH_SHORT).show();
