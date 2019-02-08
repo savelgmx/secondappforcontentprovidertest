@@ -1,5 +1,6 @@
 package elegion.com.secondappforcontentprovidertest;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mEditTextName =findViewById(R.id.et_name);
         mEditTextRelease =findViewById(R.id.et_release);
         mEditTextDuration =findViewById(R.id.et_duration);
-        //TODO реализовать в пернесенном методе логику работы согласно ТЗ
+        //TODO Проверка валидности  показать тост с текущими данными в
 
         mQueryBtn = (Button)findViewById(R.id.QueryBtn);
         mQueryBtn.setOnClickListener(this);
@@ -162,12 +163,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         if(query_sp_selected.toLowerCase().equals("update") && !ismEditTextIdEmpty() ){
-            Toast.makeText(getApplicationContext(),"selected update",Toast.LENGTH_SHORT).show();
+ /*           Toast.makeText(getApplicationContext(),"selected update",Toast.LENGTH_SHORT).show();
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", 0);
             contentValues.put("name", "new Name");
             contentValues.put("release", "tomorrow");
-            getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/1"), contentValues, null, null);
+            getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/22"), contentValues, null, null);*/
+
+            //если обновляем то каждую конкретную запись с выделенным Id который добавляем к уже сформированному  uri
+            //Id берем из значения
+            uri= ContentUris.withAppendedId(uri, Integer.valueOf(mEditTextId.getText().toString()));
             getContentResolver().update(uri, cv, null, null);
 
         }
@@ -177,6 +182,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if(query_sp_selected.toLowerCase().equals("delete") && !ismEditTextIdEmpty()){
             Toast.makeText(getApplicationContext(),"selected delete",Toast.LENGTH_SHORT).show();
+             //если удалем то каждую конкретную запись с выделенным Id который добавляем к уже сформированному  uri
+            //Id берем из значения
+            uri= ContentUris.withAppendedId(uri, Integer.valueOf(mEditTextId.getText().toString()));
+            getContentResolver().delete(uri, null,null);
+
         }
         else if(query_sp_selected.toLowerCase().equals("delete") && ismEditTextIdEmpty()){
             Toast.makeText(getApplicationContext(),"Ошибка Операции Delete. Id не должен быть пустым" ,Toast.LENGTH_SHORT).show();
