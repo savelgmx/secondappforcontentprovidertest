@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Uri uri;
 
     private static final String LOG_TAG ="SecondApp" ;
-
-     final Uri ALBUM_URI = Uri.parse("content://ru.startandroid.providers.AdressBook/contacts");
     private ContentValues cv;
 
     @Override
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mEditTextName =findViewById(R.id.et_name);
         mEditTextRelease =findViewById(R.id.et_release);
         mEditTextDuration =findViewById(R.id.et_duration);
-        //TODO Проверка валидности  показать тост с текущими данными в
+        //TODO показать тост с текущими данными в проиложении после
 
         mQueryBtn = (Button)findViewById(R.id.QueryBtn);
         mQueryBtn.setOnClickListener(this);
@@ -85,10 +83,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             uri =Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/");
         }
         if(this.tables_sp_selected.toLowerCase().equals("songs")){
-            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/songs/");
+            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/song/");
         }
         if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
-            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/songs/");
+            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/albumsong/");
         }
         Log.d(LOG_TAG,"Uri ="+uri);
             return uri;
@@ -111,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             cv.put("duration", mEditTextDuration.getText().toString());
         }
         if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
+            //cv.mValues.entrySet().toArray()[2] WHERE IS ID
             cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
             cv.put("song_id", "new Name");
             cv.put("albums_id", "tomorrow");
@@ -163,12 +162,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         if(query_sp_selected.toLowerCase().equals("update") && !ismEditTextIdEmpty() ){
- /*           Toast.makeText(getApplicationContext(),"selected update",Toast.LENGTH_SHORT).show();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("id", 0);
-            contentValues.put("name", "new Name");
-            contentValues.put("release", "tomorrow");
-            getContentResolver().update(Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/22"), contentValues, null, null);*/
 
             //если обновляем то каждую конкретную запись с выделенным Id который добавляем к уже сформированному  uri
             //Id берем из значения
