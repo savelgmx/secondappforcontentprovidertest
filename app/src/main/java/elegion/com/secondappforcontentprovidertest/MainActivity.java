@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.List;
+
 import static java.lang.String.valueOf;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
@@ -111,8 +113,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
             //cv.mValues.entrySet().toArray()[2] WHERE IS ID
             cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("song_id", "new Name");
-            cv.put("albums_id", "tomorrow");
+            cv.put("album_id", 11); //integer
+            cv.put("song_id", 11);  //integer
+
 
 
         }
@@ -191,6 +194,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+ /*   private void showToast(List<Album> albums, List<Song> songs, List<AlbumSong> albumSongs) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0, size = albums.size(); i < size; i++) {
+            builder.append(albums.get(i).toString()).append("\n");
+        }
+        for (int i=0,size=songs.size();i<size;i++)  {
+            builder.append(songs.get(i).toString()).append("\n");
+        }
+
+        for (int i=0,size=songs.size();i<size;i++) {
+            builder.append(songs.get(i).toString()).append("\n");
+        }
+        Toast.makeText(this, builder.toString(), Toast.LENGTH_LONG).show();
+
+    }*/
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
