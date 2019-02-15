@@ -1,46 +1,48 @@
 package elegion.com.secondappforcontentprovidertest;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.List;
-
 import static java.lang.String.valueOf;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String CONTENT = "content://";
+    private static final String AUTHORITY = "com.elegion.roomdatabase.musicprovider";
+    private static final String TABLE_ALBUM = "album";
+    private static final String TABLE_SONG ="song" ;
+    private static final String TABLE_ALBUMSONG = "album_song";
+
+    private static final int NONE_ID = -1;
     /*
-
-            В проекте SecondAppForContentProviderTestSecondAppForContentProviderTest определить вертикальный LinearLayout.---
-
-            Добавить на разметку 2 спиннера  ----
-           -  в одном “Albums”, “Songs”, "AlbumSongs"
-                    -  во втором - “query”, “insert”, “update”, “delete”; Строки захардкожены.
-
-            Добавить EditText, в который в последствии будет вписываться id элемента.
-            Если EditText пустой, то валидным считается только “query” и “insert”, на методы delete() и update() показывать тост с ошибкой.
-            Добавить Button (далее - кнопка действия), при нажатии на который будет выполняться выбранное во втором спиннере
-            действие с выбранной в первом спиннере таблицей и вписанным id в первый EditText.
-            Действие реализовать с помощью соответствующих методов getContentResolver() (query() / insert() / update() / delete(), пример есть в проекте)
-            Если в EditText (id) вписано не число или число, но записи под таким id в таблице нет, то при нажатии выводить тост - “Ошибка id”
-            Добавить три EditText’а (далее - EditText c данными), из которых будут заполнятся данные ContentValues для методов insert() и update()
-            Проверка валидности происходит с помощью метода query(), который должен показывать тост с текущими данными в выбранной таблице.
-        */
-    private Spinner tables_sp;//--определяем -Spinner tables_sp
-    private Spinner query_sp;//------еще Спиннер с вариантами запроса
+    
+                В проекте SecondAppForContentProviderTestSecondAppForContentProviderTest определить вертикальный LinearLayout.---
+    
+                Добавить на разметку 2 спиннера  ----
+               -  в одном “Albums”, “Songs”, "AlbumSongs"
+                        -  во втором - “query”, “insert”, “update”, “delete”; Строки захардкожены.
+    
+                Добавить EditText, в который в последствии будет вписываться id элемента.
+                Если EditText пустой, то валидным считается только “query” и “insert”, на методы delete() и update() показывать тост с ошибкой.
+                Добавить Button (далее - кнопка действия), при нажатии на который будет выполняться выбранное во втором спиннере
+                действие с выбранной в первом спиннере таблицей и вписанным id в первый EditText.
+                Действие реализовать с помощью соответствующих методов getContentResolver() (query() / insert() / update() / delete(), пример есть в проекте)
+                Если в EditText (id) вписано не число или число, но записи под таким id в таблице нет, то при нажатии выводить тост - “Ошибка id”
+                Добавить три EditText’а (далее - EditText c данными), из которых будут заполнятся данные ContentValues для методов insert() и update()
+                Проверка валидности происходит с помощью метода query(), который должен показывать тост с текущими данными в выбранной таблице.
+            */
+    private Spinner mTableSp;//--определяем -Spinner mTableSp
+    private Spinner mCommandSp;//------еще Спиннер с вариантами запроса
     private Button mQueryBtn;
 
     private EditText mEditTextId;
@@ -59,183 +61,155 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tables_sp =findViewById(R.id.tables_sp);
-        query_sp = findViewById(R.id.query_sp);
+        mTableSp =findViewById(R.id.tables_sp);
+        mCommandSp = findViewById(R.id.command_sp);
 
         mEditTextId =findViewById(R.id.et_id);
         mEditTextName =findViewById(R.id.et_name);
         mEditTextRelease =findViewById(R.id.et_release);
         mEditTextDuration =findViewById(R.id.et_duration);
-        //TODO показать тост с текущими данными в проиложении после
 
         mQueryBtn = (Button)findViewById(R.id.QueryBtn);
         mQueryBtn.setOnClickListener(this);
 
-        getSupportLoaderManager().initLoader(1, null, this);
-    }
-
-    private boolean ismEditTextIdEmpty(){
-        return mEditTextId.getText().toString().isEmpty();
     }
 
 
-    private Uri SelectTableUri(){
 
-        if(this.tables_sp_selected.toLowerCase().equals("albums")){
-            uri =Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/");
-        }
-        if(this.tables_sp_selected.toLowerCase().equals("songs")){
-            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/song/");
-        }
-        if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
-            uri = Uri.parse("content://com.elegion.roomdatabase.musicprovider/albumsong/");
-        }
-        Log.d(LOG_TAG,"Uri ="+uri);
-            return uri;
-    }
-
-    private ContentValues SelectContentValues(){
-        //передаем content values т.е. состав и значения полей
-        // для заполнения в зависимости от
-        // того какая таблица выбрана в tables' spinner value
-
-         cv = new ContentValues();
-        if(this.tables_sp_selected.toLowerCase().equals("albums")){
-            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("name",mEditTextName.getText().toString());
-            cv.put("release", mEditTextRelease.getText().toString());
-        }
-        if(this.tables_sp_selected.toLowerCase().equals("songs")){
-            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("name", mEditTextName.getText().toString());
-            cv.put("duration", mEditTextDuration.getText().toString());
-        }
-        if(this.tables_sp_selected.toLowerCase().equals("albumsongs")) {
-            //cv.mValues.entrySet().toArray()[2] WHERE IS ID
-            cv.put("id",Integer.valueOf(mEditTextId.getText().toString()) );
-            cv.put("album_id", 11); //integer
-            cv.put("song_id", 11);  //integer
-
-
-
-        }
-        Log.d(LOG_TAG,"Content Values= "+cv);
-
-     return cv;
-    }
 
     @Override
     public void onClick(View v) {
 
-        tables_sp_selected= tables_sp.getSelectedItem().toString();
-        Toast.makeText(getApplicationContext(), tables_sp_selected, Toast.LENGTH_SHORT).show();
-        String query_sp_selected= query_sp.getSelectedItem().toString();
-        Toast.makeText(getApplicationContext(), query_sp_selected, Toast.LENGTH_SHORT).show();
+        tables_sp_selected= mTableSp.getSelectedItem().toString();
+        String id = mEditTextId.getText().toString();
+        String table = mTableSp.getSelectedItem().toString();
+        String command = mCommandSp.getSelectedItem().toString();
+        boolean empty = ismEditTextIdEmpty(id);
 
-
-        uri =SelectTableUri(); //оперделяем какая таблица выбрана в Spinnere
-        cv = SelectContentValues();//что будет передваться в запрос
-
-
-        //выбираем действие в зависимости от типа запроса
-        if(query_sp_selected.toLowerCase().equals("query")) {
-            Toast.makeText(getApplicationContext(), "selected query", Toast.LENGTH_SHORT).show();
-            try {
-                getContentResolver().query(uri,
-                        null,
-                        null,
-                        null,
-                        null);
-
-            } catch (Exception ex) {
-                Log.d(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
-            }
-
+        if (empty && (command.equals("delete") || command.equals("update"))) {
+            Toast.makeText(MainActivity.this,
+                    "Нельзя использовать команды delete и update с пустым id",
+                    Toast.LENGTH_SHORT).show();
+            return;
         }
 
-            if (query_sp_selected.toLowerCase().equals("insert")) {
-                Toast.makeText(getApplicationContext(), "selected insert", Toast.LENGTH_SHORT).show();
-                try {
-                    getContentResolver().insert(uri,cv);
-                 } catch (Exception ex) {
-                    Log.d(LOG_TAG, "Error: " + ex.getClass() + ", " + ex.getMessage());
-                }
-
-            }
-
-
-        if(query_sp_selected.toLowerCase().equals("update") && !ismEditTextIdEmpty() ){
-
-            //если обновляем то каждую конкретную запись с выделенным Id который добавляем к уже сформированному  uri
-            //Id берем из значения
-            uri= ContentUris.withAppendedId(uri, Integer.valueOf(mEditTextId.getText().toString()));
-            getContentResolver().update(uri, cv, null, null);
-
+        try {
+            executeCommand(getTableName(table), command, convertToInt(id));
+        } catch (NumberFormatException ex) {
+            Toast.makeText(this, "Ошибка id", Toast.LENGTH_SHORT).show();
         }
-        else if(query_sp_selected.toLowerCase().equals("update") && ismEditTextIdEmpty() ){
-            Toast.makeText(getApplicationContext(),"Ошибка Операции Update. Id не должен быть пустым" ,Toast.LENGTH_SHORT).show();
-        }
-
-        if(query_sp_selected.toLowerCase().equals("delete") && !ismEditTextIdEmpty()){
-            Toast.makeText(getApplicationContext(),"selected delete",Toast.LENGTH_SHORT).show();
-             //если удалем то каждую конкретную запись с выделенным Id который добавляем к уже сформированному  uri
-            //Id берем из значения
-            uri= ContentUris.withAppendedId(uri, Integer.valueOf(mEditTextId.getText().toString()));
-            getContentResolver().delete(uri, null,null);
-
-        }
-        else if(query_sp_selected.toLowerCase().equals("delete") && ismEditTextIdEmpty()){
-            Toast.makeText(getApplicationContext(),"Ошибка Операции Delete. Id не должен быть пустым" ,Toast.LENGTH_SHORT).show();
-
-        }
-
-
-
 
     }
 
- /*   private void showToast(List<Album> albums, List<Song> songs, List<AlbumSong> albumSongs) {
+    private void executeCommand(String tableName, String command, int id) {
+
+        switch(command){
+            case "query" :
+                query(tableName,id);
+            case "insert" :
+                insert(tableName,id);
+            case "update":
+                update(tableName, id);
+            case "delete":
+                delete(tableName,id);
+            default:
+        }
+
+    }
+
+
+    private void query(String tableName, int id) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0, size = albums.size(); i < size; i++) {
-            builder.append(albums.get(i).toString()).append("\n");
-        }
-        for (int i=0,size=songs.size();i<size;i++)  {
-            builder.append(songs.get(i).toString()).append("\n");
-        }
+        if (id != NONE_ID) {
+            Cursor cursor = getContentResolver().query(Uri.parse(CONTENT + AUTHORITY + "/" + tableName + "/" + id),
+                    null,
+                    null,
+                    null,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String[] columnNames = cursor.getColumnNames();
+                for (String columnName : columnNames) {
+                    builder.append(cursor.getString(cursor.getColumnIndex(columnName))).append(" ");
+                }
+                Toast.makeText(this, builder.toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Ошибка id", Toast.LENGTH_LONG).show();
+            }
 
-        for (int i=0,size=songs.size();i<size;i++) {
-            builder.append(songs.get(i).toString()).append("\n");
-        }
-        Toast.makeText(this, builder.toString(), Toast.LENGTH_LONG).show();
+        } else {
+            Cursor cursor = getContentResolver().query(Uri.parse(CONTENT + AUTHORITY + "/" + tableName),
+                    null,
+                    null,
+                    null,
+                    null);
 
-    }*/
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this,
-                Uri.parse("content://com.elegion.roomdatabase.musicprovider/album/"),
-                null,
-                null,
-                null,
-                null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-
-            StringBuilder builder = new StringBuilder();
-            do {
-                builder.append(data.getString(data.getColumnIndex("name"))).append("\n");
-            } while (data.moveToNext());
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String[] columnNames = cursor.getColumnNames();
+                    for (String columnName : columnNames) {
+                        builder.append(cursor.getString(cursor.getColumnIndex(columnName))).append(" ");
+                    }
+                    builder.append("\n");
+                } while (cursor.moveToNext());
+            }
             Toast.makeText(this, builder.toString(), Toast.LENGTH_LONG).show();
         }
 
     }
-
-    @Override
-    public void onLoaderReset(Loader loader) {
-
+    private void insert(String tableName, int id) {
+        if (TABLE_ALBUM.equals(tableName)) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("id", mEditTextId.getText().toString());
+            contentValues.put("name", mEditTextName.getText().toString());
+            contentValues.put("release", mEditTextRelease.getText().toString());
+            getContentResolver().insert(Uri.parse(CONTENT + AUTHORITY + "/" + tableName), contentValues);
+        } else if (TABLE_SONG.equals(tableName)) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("id", mEditTextId.getText().toString());
+            contentValues.put("name", mEditTextName.getText().toString());
+            contentValues.put("duration", mEditTextDuration.getText().toString());
+            getContentResolver().insert(Uri.parse(CONTENT + AUTHORITY + "/" + tableName), contentValues);
+        } else if (TABLE_ALBUMSONG.equals(tableName)) {
+            try {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("album_id", mEditTextName.getText().toString());
+                contentValues.put("song_id", mEditTextDuration.getText().toString());
+                getContentResolver().insert(Uri.parse(CONTENT + AUTHORITY + "/" + tableName), contentValues);
+            } catch (SQLiteConstraintException ex){
+                Toast.makeText(this,
+                        "Ошибка id. Вы пытаетесь добавить запись, для которой нет существующих FOREIGN KEY",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
     }
+    private void update(String tableName, int id) {
+    }
+    private void delete(String tableName, int id) {
+    }
+
+    private String getTableName(String table) {
+        switch (table) {
+            case "Albums":
+                return TABLE_ALBUM;
+            case "Songs":
+                return TABLE_SONG;
+            case "AlbumSongs":
+                return TABLE_ALBUMSONG;
+            default:
+                return "";
+        }
+    }
+
+    private int convertToInt(String id) throws NumberFormatException {
+        if (!ismEditTextIdEmpty(id)) {
+            return Integer.parseInt(id);
+        }
+        return NONE_ID;
+    }
+
+    private boolean ismEditTextIdEmpty(String id) {
+        return TextUtils.isEmpty(id);
+    }
+
 
 }

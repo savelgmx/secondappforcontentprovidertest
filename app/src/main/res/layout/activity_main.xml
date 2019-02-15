@@ -15,7 +15,7 @@
         android:entries="@array/tableslist" />
 
     <Spinner
-        android:id="@+id/query_sp"
+        android:id="@+id/command_sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
