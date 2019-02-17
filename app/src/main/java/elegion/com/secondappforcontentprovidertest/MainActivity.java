@@ -13,8 +13,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import static java.lang.String.valueOf;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String CONTENT = "content://";
@@ -101,18 +99,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void executeCommand(String tableName, String command, int id) {
+    private int executeCommand(String tableName, String command, int id) {
 
         switch(command){
             case "query" :
                 query(tableName,id);
+                return 0;
             case "insert" :
                 insert(tableName,id);
+                return 1;
             case "update":
                 update(tableName, id);
+                return 2;
             case "delete":
                 delete(tableName,id);
+                return 3;
             default:
+                return -1;
         }
 
     }
@@ -183,8 +186,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     private void update(String tableName, int id) {
+        int rowUpdate = 0;
+        try {
+            if (id != NONE_ID) {
+                if (TABLE_ALBUM.equals(tableName)) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("id", mEditTextId.getText().toString());
+                    contentValues.put("name", mEditTextName.getText().toString());
+                    contentValues.put("release", mEditTextRelease.getText().toString());
+
+                    rowUpdate = getContentResolver().update(Uri.parse(CONTENT + AUTHORITY + "/" + tableName + "/" + id),
+                            contentValues,
+                            null,
+                            null);
+                    showError(rowUpdate);
+                } else if (TABLE_SONG.equals(tableName)) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("id", mEditTextId.getText().toString());
+                    contentValues.put("name", mEditTextName.getText().toString());
+                    contentValues.put("duration", mEditTextDuration.getText().toString());
+                    rowUpdate = getContentResolver().update(Uri.parse(CONTENT + AUTHORITY + "/" + tableName + "/" + id),
+                            contentValues,
+                            null,
+                            null);
+                    showError(rowUpdate);
+                } else if (TABLE_ALBUMSONG.equals(tableName)) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("id", mEditTextId.getText().toString());
+                    contentValues.put("album_id", mEditTextName.getText().toString());
+                    contentValues.put("song_id", mEditTextDuration.getText().toString());
+                    rowUpdate = getContentResolver().update(Uri.parse(CONTENT + AUTHORITY + "/" + tableName + "/" + id),
+                            contentValues,
+                            null,
+                            null);
+                    showError(rowUpdate);
+                }
+            }
+        } catch (SQLiteConstraintException ex){
+            Toast.makeText(this,
+                    "Ошибка id. Вы пытаетесь обновить запись, " +
+                            "которая является существующим FOREIGN KEY" +
+                            "\"т.е. содержит ссылки на записи в таблицах Album Songs\"",
+                    Toast.LENGTH_LONG).show();
+        }
+
     }
+
+
     private void delete(String tableName, int id) {
+
+        try {
+            if (id != NONE_ID) {
+                int rowDelete = getContentResolver().delete(Uri.parse(CONTENT + AUTHORITY + "/" + tableName    + "/" + id),
+                        null,
+                        null);
+                if (rowDelete == 0) {
+                    Toast.makeText(this, "Ошибка id", Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (SQLiteConstraintException ex){
+            Toast.makeText(this,
+                    "Ошибка id. Вы пытаетесь удалить запись, " +
+                            "которая является существующим FOREIGN KEY " +
+                            "\"т.е. содержит ссылки на записи в таблицах Album Songs\"",
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void showError(int row) {
+        if (row == 0) {
+            Toast.makeText(this, "Ошибка id", Toast.LENGTH_LONG).show();
+        }
     }
 
     private String getTableName(String table) {
