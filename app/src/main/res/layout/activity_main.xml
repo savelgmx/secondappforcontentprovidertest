@@ -28,18 +28,43 @@
         android:hint="Здесь вводят Id.Только числа "
         android:inputType="number" />
 
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_weight="1"
+        android:capitalize="words"
+        android:text="Название песни или альбома" />
+
     <EditText
         android:id="@+id/et_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Название песни или альбома.Только текст"
         android:inputType="text" />
+
+    <TextView
+        android:id="@+id/tv_release"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_weight="1"
+        android:capitalize="words"
+        android:text="Дата выпуска или Album_id " />
+
     <EditText
         android:id="@+id/et_release"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Дата выхода альбома.Только текст"
         android:inputType="text" />
+
+    <TextView
+        android:id="@+id/tv_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Длительность песни или Song_id" />
+
     <EditText
         android:id="@+id/et_duration"
         android:layout_width="match_parent"

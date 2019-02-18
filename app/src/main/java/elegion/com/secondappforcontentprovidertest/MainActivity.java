@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String AUTHORITY = "com.elegion.roomdatabase.musicprovider";
     private static final String TABLE_ALBUM = "album";
     private static final String TABLE_SONG ="song" ;
-    private static final String TABLE_ALBUMSONG = "album_song";
+    private static final String TABLE_ALBUMSONG = "albumsong";
 
     private static final int NONE_ID = -1;
     /*
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (TABLE_ALBUMSONG.equals(tableName)) {
             try {
                 ContentValues contentValues = new ContentValues();
+                contentValues.put("id", mEditTextId.getText().toString());
                 contentValues.put("album_id", mEditTextName.getText().toString());
                 contentValues.put("song_id", mEditTextDuration.getText().toString());
                 getContentResolver().insert(Uri.parse(CONTENT + AUTHORITY + "/" + tableName), contentValues);
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this,
                     "Ошибка id. Вы пытаетесь обновить запись, " +
                             "которая является существующим FOREIGN KEY" +
-                            "\"т.е. содержит ссылки на записи в таблицах Album Songs\"",
+                            "\"т.е. содержит ссылки на записи в таблицах Album и Songs\"",
                     Toast.LENGTH_LONG).show();
         }
 
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this,
                     "Ошибка id. Вы пытаетесь удалить запись, " +
                             "которая является существующим FOREIGN KEY " +
-                            "\"т.е. содержит ссылки на записи в таблицах Album Songs\"",
+                            "\"т.е. содержит ссылки на записи в таблицах Album и Songs\"",
                     Toast.LENGTH_LONG).show();
         }
 
